@@ -1,1 +1,1 @@
-@AGENTS.md
+Read and follow PROJECT_RULES.md first.
