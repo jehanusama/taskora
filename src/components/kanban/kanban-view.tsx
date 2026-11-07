@@ -1,12 +1,11 @@
 "use client";
 
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { Plus, Kanban, RefreshCw } from "lucide-react";
 import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/shared/empty-state";
 import { KanbanBoard } from "./kanban-board";
 import { KanbanFilters } from "./kanban-filters";
@@ -18,9 +17,16 @@ import { Task, TaskStatus, TaskPriority } from "@/types";
 
 export function KanbanView() {
   const searchParams = useSearchParams();
-  const initialProjectId = searchParams.get("project") || "all";
+  const urlProject = searchParams.get("project");
 
-  const [selectedProjectId, setSelectedProjectId] = useState<string>(initialProjectId);
+  const [selectedProjectId, setSelectedProjectId] = useState<string>(urlProject || "all");
+  const [prevUrlProject, setPrevUrlProject] = useState(urlProject);
+
+  if (prevUrlProject !== urlProject) {
+    setPrevUrlProject(urlProject);
+    setSelectedProjectId(urlProject || "all");
+  }
+
   const [search, setSearch] = useState("");
   const [priorityFilter, setPriorityFilter] = useState<TaskPriority | "all">("all");
   const [assigneeFilter, setAssigneeFilter] = useState("all");
@@ -28,11 +34,6 @@ export function KanbanView() {
   const [taskDialogOpen, setTaskDialogOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [targetColumn, setTargetColumn] = useState<TaskStatus>("todo");
-
-  useEffect(() => {
-    const p = searchParams.get("project");
-    if (p) setSelectedProjectId(p);
-  }, [searchParams]);
 
   const {
     data: allTasks = [],

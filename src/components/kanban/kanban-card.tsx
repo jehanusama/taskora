@@ -25,7 +25,7 @@ import { PriorityBadge } from "@/components/shared/priority-badge";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { Task, User, Project } from "@/types";
 import { useDeleteTask } from "@/hooks/use-tasks";
-import { toast } from "@/components/ui/toast";
+import { notify } from "@/lib/notify";
 import { cn } from "@/lib/utils";
 
 interface KanbanCardProps {
@@ -70,11 +70,10 @@ export function KanbanCard({
   const handleDelete = () => {
     deleteTask.mutate(task.id, {
       onSuccess: () => {
-        toast.create({
-          title: "Task Deleted",
-          description: `"${task.title}" has been deleted.`,
-          type: "success",
-        });
+        notify.success(
+          "Task Deleted",
+          `"${task.title}" has been deleted.`
+        );
         setDeleteDialogOpen(false);
       },
     });

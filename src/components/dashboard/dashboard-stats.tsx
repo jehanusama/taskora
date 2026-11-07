@@ -2,7 +2,7 @@
 
 import React from "react";
 import { FolderKanban, CheckCircle2, AlertCircle, Users, TrendingUp } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DashboardStats as StatsType } from "@/types";
 

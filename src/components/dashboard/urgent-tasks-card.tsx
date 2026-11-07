@@ -9,7 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { PriorityBadge } from "@/components/shared/priority-badge";
 import { Task } from "@/types";
 import { useUpdateTask } from "@/hooks/use-tasks";
-import { toast } from "@/components/ui/toast";
+import { notify } from "@/lib/notify";
 
 interface UrgentTasksCardProps {
   tasks: Task[];
@@ -25,11 +25,10 @@ export function UrgentTasksCard({ tasks, isLoading }: UrgentTasksCardProps) {
       { id: task.id, data: { status: nextStatus } },
       {
         onSuccess: () => {
-          toast.create({
-            title: nextStatus === "done" ? "Task Completed!" : "Task Reopened",
-            description: task.title,
-            type: "success",
-          });
+          notify.success(
+            nextStatus === "done" ? "Task Completed!" : "Task Reopened",
+            task.title
+          );
         },
       }
     );
@@ -60,7 +59,7 @@ export function UrgentTasksCard({ tasks, isLoading }: UrgentTasksCardProps) {
   // Filter urgent/high or pending tasks
   const urgentTasks = tasks
     .filter((t) => t.status !== "done")
-    .sort((a, b) => (a.priority === "urgent" ? -1 : 1))
+    .sort((a) => (a.priority === "urgent" ? -1 : 1))
     .slice(0, 5);
 
   return (
@@ -72,10 +71,14 @@ export function UrgentTasksCard({ tasks, isLoading }: UrgentTasksCardProps) {
             Tasks requiring immediate attention
           </CardDescription>
         </div>
-        <Button variant="ghost" size="sm" asChild className="gap-1 text-xs">
-          <Link href="/kanban">
-            Board <ArrowUpRight className="size-3.5" />
-          </Link>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="gap-1 text-xs"
+          render={<Link href="/kanban" />}
+          nativeButton={false}
+        >
+          Board <ArrowUpRight className="size-3.5" />
         </Button>
       </CardHeader>
 

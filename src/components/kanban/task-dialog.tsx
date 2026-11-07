@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Dialog,
@@ -16,10 +16,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { taskSchema, TaskInput } from "@/lib/validations/task";
-import { Task, TaskStatus, TaskPriority, Project, User } from "@/types";
+import { taskSchema } from "@/lib/validations/task";
+import { Task, TaskStatus, Project, User } from "@/types";
 import { useCreateTask, useUpdateTask } from "@/hooks/use-tasks";
-import { toast } from "@/components/ui/toast";
+import { notify } from "@/lib/notify";
+import { z } from "zod";
 import { Loader2, Plus, X } from "lucide-react";
 
 interface TaskDialogProps {
@@ -33,6 +34,12 @@ interface TaskDialogProps {
 }
 
 const COMMON_TAGS = ["Frontend", "Backend", "UI/UX", "Bug", "Feature", "Security", "DevOps"];
+
+function getDefaultDueDate() {
+  const d = new Date();
+  d.setDate(d.getDate() + 7);
+  return d.toISOString().split("T")[0];
+}
 
 export function TaskDialog({
   open,
@@ -53,11 +60,11 @@ export function TaskDialog({
     register,
     handleSubmit,
     setValue,
-    watch,
+    control,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<TaskInput>({
-    resolver: zodResolver(taskSchema) as any,
+  } = useForm<z.input<typeof taskSchema>, unknown, z.output<typeof taskSchema>>({
+    resolver: zodResolver(taskSchema),
     defaultValues: {
       title: "",
       description: "",
@@ -65,12 +72,12 @@ export function TaskDialog({
       status: defaultStatus,
       priority: "medium",
       assigneeId: "",
-      dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+      dueDate: getDefaultDueDate(),
       labels: [],
     },
   });
 
-  const selectedLabels = watch("labels") || [];
+  const selectedLabels = useWatch({ control, name: "labels" }) || [];
 
   useEffect(() => {
     if (taskToEdit) {
@@ -92,7 +99,7 @@ export function TaskDialog({
         status: defaultStatus,
         priority: "medium",
         assigneeId: "",
-        dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+        dueDate: getDefaultDueDate(),
         labels: [],
       });
     }
@@ -114,24 +121,22 @@ export function TaskDialog({
     );
   };
 
-  const onSubmit = async (data: TaskInput) => {
+  const onSubmit = async (data: z.output<typeof taskSchema>) => {
     if (isEditing && taskToEdit) {
       await updateTask.mutateAsync({
         id: taskToEdit.id,
         data,
       });
-      toast.create({
-        title: "Task Updated",
-        description: `"${data.title}" has been saved.`,
-        type: "success",
-      });
+      notify.success(
+        "Task Updated",
+        `"${data.title}" has been saved.`
+      );
     } else {
       await createTask.mutateAsync(data);
-      toast.create({
-        title: "Task Created",
-        description: `"${data.title}" added to the board.`,
-        type: "success",
-      });
+      notify.success(
+        "Task Created",
+        `"${data.title}" added to the board.`
+      );
     }
     onOpenChange(false);
   };

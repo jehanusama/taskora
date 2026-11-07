@@ -3,6 +3,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import {
   Dialog,
   DialogContent,
@@ -14,9 +15,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { inviteMemberSchema, InviteMemberInput } from "@/lib/validations/member";
+import { inviteMemberSchema } from "@/lib/validations/member";
 import { useInviteMember } from "@/hooks/use-members";
-import { toast } from "@/components/ui/toast";
+import { notify } from "@/lib/notify";
 import { Loader2 } from "lucide-react";
 
 interface InviteMemberDialogProps {
@@ -32,8 +33,8 @@ export function InviteMemberDialog({ open, onOpenChange }: InviteMemberDialogPro
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<InviteMemberInput>({
-    resolver: zodResolver(inviteMemberSchema) as any,
+  } = useForm<z.input<typeof inviteMemberSchema>, unknown, z.output<typeof inviteMemberSchema>>({
+    resolver: zodResolver(inviteMemberSchema),
     defaultValues: {
       name: "",
       email: "",
@@ -42,13 +43,12 @@ export function InviteMemberDialog({ open, onOpenChange }: InviteMemberDialogPro
     },
   });
 
-  const onSubmit = async (data: InviteMemberInput) => {
+  const onSubmit = async (data: z.output<typeof inviteMemberSchema>) => {
     await inviteMember.mutateAsync(data);
-    toast.create({
-      title: "Invitation Sent",
-      description: `An invite has been dispatched to ${data.email}.`,
-      type: "success",
-    });
+    notify.success(
+      "Invitation Sent",
+      `An invite has been dispatched to ${data.email}.`
+    );
     reset();
     onOpenChange(false);
   };

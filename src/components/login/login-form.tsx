@@ -1,16 +1,17 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { loginSchema, LoginInput } from "@/lib/validations/auth";
+import { loginSchema } from "@/lib/validations/auth";
 import { useLogin } from "@/hooks/use-auth";
-import { toast } from "@/components/ui/toast";
+import { notify } from "@/lib/notify";
 import { Loader2, KeyRound } from "lucide-react";
 
 export function LoginForm() {
@@ -22,8 +23,8 @@ export function LoginForm() {
     handleSubmit,
     setValue,
     formState: { errors, isSubmitting },
-  } = useForm<LoginInput>({
-    resolver: zodResolver(loginSchema) as any,
+  } = useForm<z.input<typeof loginSchema>, unknown, z.output<typeof loginSchema>>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -34,20 +35,18 @@ export function LoginForm() {
   const handleFillDemo = () => {
     setValue("email", "alex.morgan@taskora.io");
     setValue("password", "taskora2026!");
-    toast.create({
-      title: "Demo Credentials Injected",
-      description: "Signed in as Alex Morgan (Admin)",
-      type: "info",
-    });
+    notify.info(
+      "Demo Credentials Injected",
+      "Signed in as Alex Morgan (Admin)"
+    );
   };
 
-  const onSubmit = async (data: LoginInput) => {
+  const onSubmit = async (data: z.output<typeof loginSchema>) => {
     await login.mutateAsync(data.email);
-    toast.create({
-      title: "Welcome back!",
-      description: "Successfully authenticated into Taskora.",
-      type: "success",
-    });
+    notify.success(
+      "Welcome back!",
+      "Successfully authenticated into Taskora."
+    );
     router.push("/dashboard");
   };
 

@@ -4,40 +4,36 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { forgotPasswordSchema, ForgotPasswordInput } from "@/lib/validations/auth";
+import { forgotPasswordSchema } from "@/lib/validations/auth";
 import { useForgotPassword } from "@/hooks/use-auth";
-import { toast } from "@/components/ui/toast";
+import { notify } from "@/lib/notify";
 import { Loader2, ArrowLeft, CheckCircle2 } from "lucide-react";
 
 export function ForgotPasswordForm() {
   const [submitted, setSubmitted] = useState(false);
+  const [submittedEmail, setSubmittedEmail] = useState("");
   const forgotPassword = useForgotPassword();
 
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors, isSubmitting },
-  } = useForm<ForgotPasswordInput>({
-    resolver: zodResolver(forgotPasswordSchema) as any,
+  } = useForm<z.input<typeof forgotPasswordSchema>, unknown, z.output<typeof forgotPasswordSchema>>({
+    resolver: zodResolver(forgotPasswordSchema),
     defaultValues: {
       email: "",
     },
   });
 
-  const emailValue = watch("email");
-
-  const onSubmit = async (data: ForgotPasswordInput) => {
+  const onSubmit = async (data: z.output<typeof forgotPasswordSchema>) => {
     await forgotPassword.mutateAsync(data.email);
+    setSubmittedEmail(data.email);
     setSubmitted(true);
-    toast.create({
-      title: "Reset Link Sent",
-      description: `Check your inbox at ${data.email}.`,
-      type: "success",
-    });
+    notify.success("Reset Link Sent", `Check your inbox at ${data.email}.`);
   };
 
   const isPending = forgotPassword.isPending || isSubmitting;
@@ -51,13 +47,16 @@ export function ForgotPasswordForm() {
         <div>
           <h4 className="text-sm font-bold text-foreground">Recovery email dispatched</h4>
           <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
-            We sent instructions to <strong>{emailValue}</strong>. Follow the link in the email to set a new password.
+            We sent instructions to <strong>{submittedEmail}</strong>. Follow the link in the email to set a new password.
           </p>
         </div>
-        <Button asChild variant="outline" className="w-full text-xs">
-          <Link href="/login">
-            <ArrowLeft className="size-3.5 mr-1.5" /> Back to Sign in
-          </Link>
+        <Button
+          variant="outline"
+          className="w-full text-xs"
+          render={<Link href="/login" />}
+          nativeButton={false}
+        >
+          <ArrowLeft className="size-3.5 mr-1.5" /> Back to Sign in
         </Button>
       </div>
     );

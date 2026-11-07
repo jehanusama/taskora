@@ -8,10 +8,8 @@ import {
   Kanban,
   Trash2,
   Edit,
-  ExternalLink,
-  Users,
 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -25,7 +23,7 @@ import { StatusBadge } from "@/components/shared/status-badge";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { Project, User } from "@/types";
 import { useDeleteProject } from "@/hooks/use-projects";
-import { toast } from "@/components/ui/toast";
+import { notify } from "@/lib/notify";
 
 interface ProjectCardProps {
   project: Project;
@@ -49,11 +47,10 @@ export function ProjectCard({ project, members, onEdit }: ProjectCardProps) {
   const handleDelete = () => {
     deleteProject.mutate(project.id, {
       onSuccess: () => {
-        toast.create({
-          title: "Project Deleted",
-          description: `"${project.name}" has been removed.`,
-          type: "success",
-        });
+        notify.success(
+          "Project Deleted",
+          `"${project.name}" has been removed.`
+        );
         setDeleteDialogOpen(false);
       },
     });
@@ -100,11 +97,16 @@ export function ProjectCard({ project, members, onEdit }: ProjectCardProps) {
                 <MoreVertical className="size-4" />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-44">
-                <DropdownMenuItem asChild>
-                  <Link href={`/kanban?project=${project.id}`} className="flex items-center">
-                    <Kanban className="size-4 mr-2" />
-                    <span>Open Board</span>
-                  </Link>
+                <DropdownMenuItem
+                  render={
+                    <Link
+                      href={`/kanban?project=${project.id}`}
+                      className="flex items-center"
+                    />
+                  }
+                >
+                  <Kanban className="size-4 mr-2" />
+                  <span>Open Board</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => onEdit(project)}>
                   <Edit className="size-4 mr-2" />

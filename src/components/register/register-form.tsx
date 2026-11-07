@@ -4,12 +4,13 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { registerSchema, RegisterInput } from "@/lib/validations/auth";
+import { registerSchema } from "@/lib/validations/auth";
 import { useRegister } from "@/hooks/use-auth";
-import { toast } from "@/components/ui/toast";
+import { notify } from "@/lib/notify";
 import { Loader2 } from "lucide-react";
 
 export function RegisterForm() {
@@ -20,8 +21,8 @@ export function RegisterForm() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<RegisterInput>({
-    resolver: zodResolver(registerSchema) as any,
+  } = useForm<z.input<typeof registerSchema>, unknown, z.output<typeof registerSchema>>({
+    resolver: zodResolver(registerSchema),
     defaultValues: {
       name: "",
       email: "",
@@ -31,13 +32,12 @@ export function RegisterForm() {
     },
   });
 
-  const onSubmit = async (data: RegisterInput) => {
+  const onSubmit = async (data: z.output<typeof registerSchema>) => {
     await registerUser.mutateAsync({ name: data.name, email: data.email });
-    toast.create({
-      title: "Account Created!",
-      description: "Welcome to Taskora. Your workspace is ready.",
-      type: "success",
-    });
+    notify.success(
+      "Account Created!",
+      "Welcome to Taskora. Your workspace is ready."
+    );
     router.push("/dashboard");
   };
 

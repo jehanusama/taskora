@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Search, Filter, X } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Project, User, TaskPriority } from "@/types";

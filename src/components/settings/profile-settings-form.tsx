@@ -9,13 +9,14 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { profileSchema, ProfileInput } from "@/lib/validations/settings";
+import { profileSchema } from "@/lib/validations/settings";
 import { useCurrentUser, useUpdateProfile } from "@/hooks/use-auth";
-import { toast } from "@/components/ui/toast";
+import { notify } from "@/lib/notify";
+import { z } from "zod";
 import { Loader2, Upload } from "lucide-react";
 
 export function ProfileSettingsForm() {
-  const { data: user, isLoading } = useCurrentUser();
+  const { data: user } = useCurrentUser();
   const updateProfile = useUpdateProfile();
 
   const {
@@ -23,8 +24,8 @@ export function ProfileSettingsForm() {
     handleSubmit,
     reset,
     formState: { errors, isDirty, isSubmitting },
-  } = useForm<ProfileInput>({
-    resolver: zodResolver(profileSchema) as any,
+  } = useForm<z.input<typeof profileSchema>, unknown, z.output<typeof profileSchema>>({
+    resolver: zodResolver(profileSchema),
     defaultValues: {
       name: "",
       email: "",
@@ -46,13 +47,12 @@ export function ProfileSettingsForm() {
     }
   }, [user, reset]);
 
-  const onSubmit = async (data: ProfileInput) => {
+  const onSubmit = async (data: z.output<typeof profileSchema>) => {
     await updateProfile.mutateAsync(data);
-    toast.create({
-      title: "Profile Updated",
-      description: "Your user profile changes have been saved.",
-      type: "success",
-    });
+    notify.success(
+      "Profile Updated",
+      "Your user profile changes have been saved."
+    );
   };
 
   const isPending = updateProfile.isPending || isSubmitting;
@@ -89,11 +89,10 @@ export function ProfileSettingsForm() {
               size="sm"
               className="mt-1 h-7 text-xs gap-1.5"
               onClick={() =>
-                toast.create({
-                  title: "Avatar update",
-                  description: "Photo uploaded successfully (simulation).",
-                  type: "success",
-                })
+                notify.success(
+                  "Avatar update",
+                  "Photo uploaded successfully (simulation)."
+                )
               }
             >
               <Upload className="size-3" /> Change Photo

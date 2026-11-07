@@ -3,7 +3,6 @@
 import React from "react";
 import { Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { ProjectStatus } from "@/types";
 import { cn } from "@/lib/utils";
 
@@ -12,7 +11,6 @@ interface ProjectFiltersProps {
   onSearchChange: (value: string) => void;
   statusFilter: ProjectStatus | "all";
   onStatusFilterChange: (status: ProjectStatus | "all") => void;
-  totalCount: number;
 }
 
 export function ProjectFilters({
@@ -20,7 +18,6 @@ export function ProjectFilters({
   onSearchChange,
   statusFilter,
   onStatusFilterChange,
-  totalCount,
 }: ProjectFiltersProps) {
   const tabs: { label: string; value: ProjectStatus | "all" }[] = [
     { label: "All Projects", value: "all" },

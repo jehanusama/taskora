@@ -32,7 +32,7 @@ export function useCreateTask() {
   return useMutation({
     mutationFn: (data: Omit<Task, "id" | "order" | "createdAt" | "updatedAt">) =>
       tasksApi.create(data),
-    onSuccess: (newTask) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: TASK_KEYS.all });
       queryClient.invalidateQueries({ queryKey: PROJECT_KEYS.all });
       queryClient.invalidateQueries({ queryKey: ["dashboard"] });
@@ -46,7 +46,7 @@ export function useUpdateTask() {
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<Task> }) =>
       tasksApi.update(id, data),
-    onSuccess: (updatedTask) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: TASK_KEYS.all });
       queryClient.invalidateQueries({ queryKey: PROJECT_KEYS.all });
       queryClient.invalidateQueries({ queryKey: ["dashboard"] });

@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { User, UserRole } from "@/types";
 import { useUpdateMemberRole, useRemoveMember } from "@/hooks/use-members";
-import { toast } from "@/components/ui/toast";
+import { notify } from "@/lib/notify";
 
 interface MembersTableProps {
   members: User[];
@@ -26,11 +26,10 @@ export function MembersTable({ members, currentUserId }: MembersTableProps) {
       { id: member.id, role: newRole },
       {
         onSuccess: () => {
-          toast.create({
-            title: "Role Updated",
-            description: `${member.name} is now a ${newRole}.`,
-            type: "success",
-          });
+          notify.success(
+            "Role Updated",
+            `${member.name} is now a ${newRole}.`
+          );
         },
       }
     );
@@ -40,11 +39,10 @@ export function MembersTable({ members, currentUserId }: MembersTableProps) {
     if (!memberToRemove) return;
     removeMember.mutate(memberToRemove.id, {
       onSuccess: () => {
-        toast.create({
-          title: "Member Removed",
-          description: `${memberToRemove.name} has been removed from workspace.`,
-          type: "success",
-        });
+        notify.success(
+          "Member Removed",
+          `${memberToRemove.name} has been removed from workspace.`
+        );
         setMemberToRemove(null);
       },
     });

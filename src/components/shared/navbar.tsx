@@ -31,7 +31,7 @@ import {
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { useCurrentUser } from "@/hooks/use-auth";
 import { useRecentActivities } from "@/hooks/use-dashboard";
-import { toast } from "@/components/ui/toast";
+import { notify } from "@/lib/notify";
 
 interface NavbarProps {
   onOpenMobileMenu: () => void;
@@ -44,11 +44,10 @@ export function Navbar({ onOpenMobileMenu }: NavbarProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleLogout = () => {
-    toast.create({
-      title: "Signed out",
-      description: "You have been safely signed out.",
-      type: "info",
-    });
+    notify.info(
+      "Signed out",
+      "You have been safely signed out."
+    );
     router.push("/login");
   };
 
@@ -140,10 +139,7 @@ export function Navbar({ onOpenMobileMenu }: NavbarProps) {
               <button
                 type="button"
                 onClick={() =>
-                  toast.create({
-                    title: "Marked all as read",
-                    type: "success",
-                  })
+                  notify.success("Marked all as read")
                 }
                 className="text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
               >

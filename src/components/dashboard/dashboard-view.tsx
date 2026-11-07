@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { Plus, FolderKanban, Kanban, Users, RefreshCw } from "lucide-react";
+import { Plus, Users, RefreshCw } from "lucide-react";
 import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";
 import { DashboardStats } from "./dashboard-stats";
@@ -81,17 +81,24 @@ export function DashboardView() {
         title={`${greeting()}, ${user?.name ? user.name.split(" ")[0] : "there"}! 👋`}
         description="Here is what is happening across your projects and active work streams today."
       >
-        <Button asChild variant="outline" size="sm" className="gap-1.5 shadow-xs">
-          <Link href="/members">
-            <Users className="size-4" />
-            <span>Team</span>
-          </Link>
+        <Button
+          variant="outline"
+          size="sm"
+          className="gap-1.5 shadow-xs"
+          render={<Link href="/members" />}
+          nativeButton={false}
+        >
+          <Users className="size-4" />
+          <span>Team</span>
         </Button>
-        <Button asChild size="sm" className="gap-1.5 shadow-xs">
-          <Link href="/projects">
-            <Plus className="size-4" />
-            <span>New Project</span>
-          </Link>
+        <Button
+          size="sm"
+          className="gap-1.5 shadow-xs"
+          render={<Link href="/projects" />}
+          nativeButton={false}
+        >
+          <Plus className="size-4" />
+          <span>New Project</span>
         </Button>
       </PageHeader>
 

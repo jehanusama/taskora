@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Dialog,
@@ -16,10 +16,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { projectSchema, ProjectInput } from "@/lib/validations/project";
+import { projectSchema } from "@/lib/validations/project";
 import { Project, User } from "@/types";
 import { useCreateProject, useUpdateProject } from "@/hooks/use-projects";
-import { toast } from "@/components/ui/toast";
+import { notify } from "@/lib/notify";
+import { z } from "zod";
 import { Loader2, Palette } from "lucide-react";
 
 interface CreateProjectDialogProps {
@@ -40,6 +41,12 @@ const COLOR_PRESETS = [
   "#6366f1", // Indigo
 ];
 
+function getDefaultDueDate() {
+  const d = new Date();
+  d.setDate(d.getDate() + 30);
+  return d.toISOString().split("T")[0];
+}
+
 export function CreateProjectDialog({
   open,
   onOpenChange,
@@ -55,25 +62,24 @@ export function CreateProjectDialog({
     register,
     handleSubmit,
     setValue,
-    watch,
+    control,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<ProjectInput>({
-    resolver: zodResolver(projectSchema) as any,
+  } = useForm<z.input<typeof projectSchema>, unknown, z.output<typeof projectSchema>>({
+    resolver: zodResolver(projectSchema),
     defaultValues: {
       name: "",
       key: "",
       description: "",
       color: COLOR_PRESETS[0],
       status: "active",
-      dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+      dueDate: getDefaultDueDate(),
       memberIds: members.slice(0, 2).map((m) => m.id),
     },
   });
 
-  const selectedColor = watch("color");
-  const selectedMembers = watch("memberIds") || [];
-  const selectedStatus = watch("status");
+  const selectedColor = useWatch({ control, name: "color" });
+  const selectedMembers = useWatch({ control, name: "memberIds" }) || [];
 
   useEffect(() => {
     if (projectToEdit) {
@@ -93,7 +99,7 @@ export function CreateProjectDialog({
         description: "",
         color: COLOR_PRESETS[0],
         status: "active",
-        dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+        dueDate: getDefaultDueDate(),
         memberIds: members.slice(0, 2).map((m) => m.id),
       });
     }
@@ -124,24 +130,22 @@ export function CreateProjectDialog({
     setValue("memberIds", Array.from(current), { shouldValidate: true });
   };
 
-  const onSubmit = async (data: ProjectInput) => {
+  const onSubmit = async (data: z.output<typeof projectSchema>) => {
     if (isEditing && projectToEdit) {
       await updateProject.mutateAsync({
         id: projectToEdit.id,
         data,
       });
-      toast.create({
-        title: "Project updated",
-        description: `"${data.name}" has been updated.`,
-        type: "success",
-      });
+      notify.success(
+        "Project updated",
+        `"${data.name}" has been updated.`
+      );
     } else {
       await createProject.mutateAsync(data);
-      toast.create({
-        title: "Project created",
-        description: `"${data.name}" is now ready!`,
-        type: "success",
-      });
+      notify.success(
+        "Project created",
+        `"${data.name}" is now ready!`
+      );
     }
     onOpenChange(false);
   };

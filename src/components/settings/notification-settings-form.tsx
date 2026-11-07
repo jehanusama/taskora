@@ -1,42 +1,39 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useWorkspaceSettings, useUpdateNotifications } from "@/hooks/use-settings";
-import { toast } from "@/components/ui/toast";
+import { notify } from "@/lib/notify";
+import { WorkspaceSettings } from "@/types";
 import { Loader2, BellRing, Mail, CheckCircle, FileText } from "lucide-react";
 
 export function NotificationSettingsForm() {
   const { data: workspace } = useWorkspaceSettings();
   const updateNotifications = useUpdateNotifications();
 
-  const [settings, setSettings] = useState({
+  const [localSettings, setLocalSettings] = useState<WorkspaceSettings["notifications"] | null>(null);
+
+  const settings = localSettings ?? workspace?.notifications ?? {
     emailDigest: true,
     taskAssignment: true,
     projectUpdates: true,
     weeklySummary: false,
-  });
-
-  useEffect(() => {
-    if (workspace?.notifications) {
-      setSettings(workspace.notifications);
-    }
-  }, [workspace]);
+  };
 
   const handleToggle = (key: keyof typeof settings) => {
-    setSettings((prev) => ({ ...prev, [key]: !prev[key] }));
+    setLocalSettings({ ...settings, [key]: !settings[key] });
   };
 
   const handleSave = async () => {
     await updateNotifications.mutateAsync(settings);
-    toast.create({
-      title: "Preferences Saved",
-      description: "Notification alert preferences updated.",
-      type: "success",
-    });
+    setLocalSettings(null);
+    notify.success(
+      "Preferences Saved",
+      "Notification alert preferences updated."
+    );
   };
 
   const notificationOptions = [

@@ -10,15 +10,12 @@ import {
   useSensors,
   DragStartEvent,
   DragEndEvent,
-  DragOverEvent,
 } from "@dnd-kit/core";
-import { arrayMove } from "@dnd-kit/sortable";
 import { KanbanColumn } from "./kanban-column";
 import { KanbanCard } from "./kanban-card";
 import {
   Task,
   TaskStatus,
-  KanbanColumn as ColumnType,
   User,
   Project,
 } from "@/types";

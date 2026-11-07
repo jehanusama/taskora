@@ -8,9 +8,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { workspaceSchema, WorkspaceInput } from "@/lib/validations/settings";
+import { workspaceSchema } from "@/lib/validations/settings";
 import { useWorkspaceSettings, useUpdateWorkspace } from "@/hooks/use-settings";
-import { toast } from "@/components/ui/toast";
+import { notify } from "@/lib/notify";
+import { z } from "zod";
 import { Loader2, Sparkles } from "lucide-react";
 
 export function WorkspaceSettingsForm() {
@@ -22,8 +23,8 @@ export function WorkspaceSettingsForm() {
     handleSubmit,
     reset,
     formState: { errors, isDirty, isSubmitting },
-  } = useForm<WorkspaceInput>({
-    resolver: zodResolver(workspaceSchema) as any,
+  } = useForm<z.input<typeof workspaceSchema>, unknown, z.output<typeof workspaceSchema>>({
+    resolver: zodResolver(workspaceSchema),
     defaultValues: {
       name: "",
       slug: "",
@@ -41,13 +42,12 @@ export function WorkspaceSettingsForm() {
     }
   }, [workspace, reset]);
 
-  const onSubmit = async (data: WorkspaceInput) => {
+  const onSubmit = async (data: z.output<typeof workspaceSchema>) => {
     await updateWorkspace.mutateAsync(data);
-    toast.create({
-      title: "Workspace Updated",
-      description: "Organization details successfully updated.",
-      type: "success",
-    });
+    notify.success(
+      "Workspace Updated",
+      "Organization details successfully updated."
+    );
   };
 
   const isPending = updateWorkspace.isPending || isSubmitting;
@@ -85,11 +85,10 @@ export function WorkspaceSettingsForm() {
             variant="outline"
             size="sm"
             onClick={() =>
-              toast.create({
-                title: "Subscription Management",
-                description: "Stripe billing portal simulation opened.",
-                type: "info",
-              })
+              notify.info(
+                "Subscription Management",
+                "Stripe billing portal simulation opened."
+              )
             }
           >
             Manage Billing

@@ -74,7 +74,6 @@ export function ProjectsView() {
         onSearchChange={setSearch}
         statusFilter={statusFilter}
         onStatusFilterChange={setStatusFilter}
-        totalCount={filteredProjects.length}
       />
 
       {/* Content Area: Loading / Error / Empty / Grid */}

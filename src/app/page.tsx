@@ -6,7 +6,6 @@ import {
   CheckCircle2,
   FolderKanban,
   Users,
-  Shield,
   Zap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -54,13 +53,21 @@ export default function HomePage() {
 
         <div className="flex items-center gap-3">
           <ThemeToggle />
-          <Button asChild variant="ghost" size="sm">
-            <Link href="/login">Sign In</Link>
+          <Button
+            variant="ghost"
+            size="sm"
+            render={<Link href="/login" />}
+            nativeButton={false}
+          >
+            Sign In
           </Button>
-          <Button asChild size="sm" className="gap-1.5 shadow-xs">
-            <Link href="/dashboard">
-              Enter Workspace <ArrowRight className="size-4" />
-            </Link>
+          <Button
+            size="sm"
+            className="gap-1.5 shadow-xs"
+            render={<Link href="/dashboard" />}
+            nativeButton={false}
+          >
+            Enter Workspace <ArrowRight className="size-4" />
           </Button>
         </div>
       </header>
@@ -92,13 +99,22 @@ export default function HomePage() {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
-              <Button asChild size="lg" className="h-11 px-8 gap-2 shadow-sm font-semibold text-base w-full sm:w-auto">
-                <Link href="/dashboard">
-                  Launch Demo Workspace <ArrowRight className="size-4" />
-                </Link>
+              <Button
+                size="lg"
+                className="h-11 px-8 gap-2 shadow-sm font-semibold text-base w-full sm:w-auto"
+                render={<Link href="/dashboard" />}
+                nativeButton={false}
+              >
+                Launch Demo Workspace <ArrowRight className="size-4" />
               </Button>
-              <Button asChild variant="outline" size="lg" className="h-11 px-8 text-base w-full sm:w-auto">
-                <Link href="/kanban">View Live Kanban Board</Link>
+              <Button
+                variant="outline"
+                size="lg"
+                className="h-11 px-8 text-base w-full sm:w-auto"
+                render={<Link href="/kanban" />}
+                nativeButton={false}
+              >
+                View Live Kanban Board
               </Button>
             </div>
 
@@ -161,10 +177,13 @@ export default function HomePage() {
               Explore the full interactive application without needing to create an account or set up a database.
             </p>
             <div className="flex justify-center gap-3">
-              <Button asChild size="lg" className="h-11 px-8 gap-2 font-semibold">
-                <Link href="/dashboard">
-                  Enter {siteConfig.name} <ArrowRight className="size-4" />
-                </Link>
+              <Button
+                size="lg"
+                className="h-11 px-8 gap-2 font-semibold"
+                render={<Link href="/dashboard" />}
+                nativeButton={false}
+              >
+                Enter {siteConfig.name} <ArrowRight className="size-4" />
               </Button>
             </div>
           </div>

@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { ArrowUpRight, FolderKanban } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -46,10 +46,14 @@ export function ProjectProgressCard({ projects, isLoading }: ProjectProgressCard
             Milestones and task completion rates
           </CardDescription>
         </div>
-        <Button variant="ghost" size="sm" asChild className="gap-1 text-xs">
-          <Link href="/projects">
-            View All <ArrowUpRight className="size-3.5" />
-          </Link>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="gap-1 text-xs"
+          render={<Link href="/projects" />}
+          nativeButton={false}
+        >
+          View All <ArrowUpRight className="size-3.5" />
         </Button>
       </CardHeader>
 
