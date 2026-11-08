@@ -24,6 +24,7 @@ import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { Project, User } from "@/types";
 import { useDeleteProject } from "@/hooks/use-projects";
 import { notify } from "@/lib/notify";
+import { routes, DEFAULT_WORKSPACE } from "@/config/routes";
 
 interface ProjectCardProps {
   project: Project;
@@ -100,7 +101,7 @@ export function ProjectCard({ project, members, onEdit }: ProjectCardProps) {
                 <DropdownMenuItem
                   render={
                     <Link
-                      href={`/kanban?project=${project.id}`}
+                      href={routes.board(DEFAULT_WORKSPACE, project.id)}
                       className="flex items-center"
                     />
                   }
@@ -127,7 +128,7 @@ export function ProjectCard({ project, members, onEdit }: ProjectCardProps) {
           {/* Title & Description */}
           <div className="mt-3.5">
             <Link
-              href={`/kanban?project=${project.id}`}
+              href={routes.board(DEFAULT_WORKSPACE, project.id)}
               className="text-base font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-1"
             >
               {project.name}

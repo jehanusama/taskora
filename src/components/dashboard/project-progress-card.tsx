@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { Project } from "@/types";
+import { routes, DEFAULT_WORKSPACE } from "@/config/routes";
 
 interface ProjectProgressCardProps {
   projects: Project[];
@@ -50,7 +51,7 @@ export function ProjectProgressCard({ projects, isLoading }: ProjectProgressCard
           variant="ghost"
           size="sm"
           className="gap-1 text-xs"
-          render={<Link href="/projects" />}
+          render={<Link href={routes.projects(DEFAULT_WORKSPACE)} />}
           nativeButton={false}
         >
           View All <ArrowUpRight className="size-3.5" />
@@ -82,7 +83,7 @@ export function ProjectProgressCard({ projects, isLoading }: ProjectProgressCard
                       aria-hidden="true"
                     />
                     <Link
-                      href={`/projects`}
+                      href={routes.projects(DEFAULT_WORKSPACE)}
                       className="text-sm font-medium text-foreground truncate hover:text-primary transition-colors"
                     >
                       {project.name}
@@ -110,7 +111,7 @@ export function ProjectProgressCard({ projects, isLoading }: ProjectProgressCard
                     {project.completedTaskCount} of {project.taskCount} tasks closed
                   </span>
                   <Link
-                    href={`/kanban?project=${project.id}`}
+                    href={routes.board(DEFAULT_WORKSPACE, project.id)}
                     className="hover:text-primary hover:underline transition-colors"
                   >
                     Open Kanban &rarr;

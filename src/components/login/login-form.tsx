@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { loginSchema } from "@/lib/validations/auth";
 import { useLogin } from "@/hooks/use-auth";
 import { notify } from "@/lib/notify";
+import { routes, DEFAULT_WORKSPACE } from "@/config/routes";
 import { Loader2, KeyRound } from "lucide-react";
 
 export function LoginForm() {
@@ -47,7 +48,7 @@ export function LoginForm() {
       "Welcome back!",
       "Successfully authenticated into Taskora."
     );
-    router.push("/dashboard");
+    router.push(routes.dashboard(DEFAULT_WORKSPACE));
   };
 
   const isPending = login.isPending || isSubmitting;
@@ -94,7 +95,7 @@ export function LoginForm() {
             Password
           </Label>
           <Link
-            href="/forgot-password"
+            href={routes.forgotPassword()}
             className="text-xs text-primary font-medium hover:underline"
           >
             Forgot password?

@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { forgotPasswordSchema } from "@/lib/validations/auth";
 import { useForgotPassword } from "@/hooks/use-auth";
 import { notify } from "@/lib/notify";
+import { routes } from "@/config/routes";
 import { Loader2, ArrowLeft, CheckCircle2 } from "lucide-react";
 
 export function ForgotPasswordForm() {
@@ -53,7 +54,7 @@ export function ForgotPasswordForm() {
         <Button
           variant="outline"
           className="w-full text-xs"
-          render={<Link href="/login" />}
+          render={<Link href={routes.login()} />}
           nativeButton={false}
         >
           <ArrowLeft className="size-3.5 mr-1.5" /> Back to Sign in
@@ -88,7 +89,7 @@ export function ForgotPasswordForm() {
 
       <div className="text-center pt-2">
         <Link
-          href="/login"
+          href={routes.login()}
           className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1 font-medium transition-colors"
         >
           <ArrowLeft className="size-3" /> Back to Sign in

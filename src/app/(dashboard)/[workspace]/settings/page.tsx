@@ -10,4 +10,3 @@ export const metadata: Metadata = {
 export default function SettingsPage() {
   return <SettingsView />;
 }
-

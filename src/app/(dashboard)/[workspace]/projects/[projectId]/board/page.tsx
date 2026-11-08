@@ -4,12 +4,21 @@ import { KanbanView } from "@/components/kanban/kanban-view";
 import { LoadingSpinner } from "@/components/shared/loading-spinner";
 import { siteConfig } from "@/config/site";
 
+interface BoardPageProps {
+  params: Promise<{
+    workspace: string;
+    projectId: string;
+  }>;
+}
+
 export const metadata: Metadata = {
   title: `Kanban Board | ${siteConfig.name}`,
   description: "Visual sprint board and workflow pipeline.",
 };
 
-export default function KanbanPage() {
+export default async function BoardPage({ params }: BoardPageProps) {
+  const { projectId } = await params;
+
   return (
     <Suspense
       fallback={
@@ -18,8 +27,7 @@ export default function KanbanPage() {
         </div>
       }
     >
-      <KanbanView />
+      <KanbanView projectId={projectId} />
     </Suspense>
   );
 }
-

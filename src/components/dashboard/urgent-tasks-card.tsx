@@ -10,6 +10,7 @@ import { PriorityBadge } from "@/components/shared/priority-badge";
 import { Task } from "@/types";
 import { useUpdateTask } from "@/hooks/use-tasks";
 import { notify } from "@/lib/notify";
+import { routes, DEFAULT_WORKSPACE } from "@/config/routes";
 
 interface UrgentTasksCardProps {
   tasks: Task[];
@@ -75,7 +76,7 @@ export function UrgentTasksCard({ tasks, isLoading }: UrgentTasksCardProps) {
           variant="ghost"
           size="sm"
           className="gap-1 text-xs"
-          render={<Link href="/kanban" />}
+          render={<Link href={routes.projects(DEFAULT_WORKSPACE)} />}
           nativeButton={false}
         >
           Board <ArrowUpRight className="size-3.5" />

@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { useSearchParams } from "next/navigation";
 import { Plus, Kanban, RefreshCw } from "lucide-react";
 import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";
@@ -15,16 +14,17 @@ import { useProjects } from "@/hooks/use-projects";
 import { useMembers } from "@/hooks/use-members";
 import { Task, TaskStatus, TaskPriority } from "@/types";
 
-export function KanbanView() {
-  const searchParams = useSearchParams();
-  const urlProject = searchParams.get("project");
+interface KanbanViewProps {
+  projectId?: string;
+}
 
-  const [selectedProjectId, setSelectedProjectId] = useState<string>(urlProject || "all");
-  const [prevUrlProject, setPrevUrlProject] = useState(urlProject);
+export function KanbanView({ projectId }: KanbanViewProps) {
+  const [selectedProjectId, setSelectedProjectId] = useState<string>(projectId || "all");
+  const [prevProjectId, setPrevProjectId] = useState(projectId);
 
-  if (prevUrlProject !== urlProject) {
-    setPrevUrlProject(urlProject);
-    setSelectedProjectId(urlProject || "all");
+  if (prevProjectId !== projectId) {
+    setPrevProjectId(projectId);
+    setSelectedProjectId(projectId || "all");
   }
 
   const [search, setSearch] = useState("");
@@ -35,12 +35,14 @@ export function KanbanView() {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [targetColumn, setTargetColumn] = useState<TaskStatus>("todo");
 
+  const activeProjectId = selectedProjectId !== "all" ? selectedProjectId : undefined;
+
   const {
     data: allTasks = [],
     isLoading: tasksLoading,
     isError: tasksError,
     refetch: refetchTasks,
-  } = useTasks();
+  } = useTasks(activeProjectId);
 
   const {
     data: projects = [],
@@ -50,9 +52,14 @@ export function KanbanView() {
 
   const { data: members = [] } = useMembers();
 
+  const currentProject = useMemo(
+    () => (activeProjectId ? projects.find((p) => p.id === activeProjectId) : undefined),
+    [projects, activeProjectId]
+  );
+
   const filteredTasks = useMemo(() => {
     return allTasks.filter((task) => {
-      // Project filter
+      // Client-side guard for project
       if (selectedProjectId !== "all" && task.projectId !== selectedProjectId) {
         return false;
       }
@@ -96,7 +103,7 @@ export function KanbanView() {
     setSearch("");
     setPriorityFilter("all");
     setAssigneeFilter("all");
-    setSelectedProjectId("all");
+    setSelectedProjectId(projectId || "all");
   };
 
   const isLoading = tasksLoading || projectsLoading;
@@ -105,8 +112,12 @@ export function KanbanView() {
     <div className="space-y-6">
       {/* Header */}
       <PageHeader
-        title="Kanban Board"
-        description="Visualize workflow bottlenecks, organize task stages, and drag cards to update progress."
+        title={currentProject ? `${currentProject.name} Board` : "Kanban Board"}
+        description={
+          currentProject
+            ? `Sprint board and delivery pipeline for ${currentProject.name}.`
+            : "Visualize workflow bottlenecks, organize task stages, and drag cards to update progress."
+        }
         badge={filteredTasks.length}
       >
         <Button onClick={() => handleOpenAddTask("todo")} className="gap-2 shadow-xs">
@@ -177,11 +188,10 @@ export function KanbanView() {
         onOpenChange={setTaskDialogOpen}
         taskToEdit={editingTask}
         defaultStatus={targetColumn}
-        defaultProjectId={selectedProjectId !== "all" ? selectedProjectId : undefined}
+        defaultProjectId={selectedProjectId !== "all" ? selectedProjectId : (projectId || undefined)}
         projects={projects}
         members={members}
       />
     </div>
   );
 }
-

@@ -32,6 +32,7 @@ import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { useCurrentUser } from "@/hooks/use-auth";
 import { useRecentActivities } from "@/hooks/use-dashboard";
 import { notify } from "@/lib/notify";
+import { routes, DEFAULT_WORKSPACE } from "@/config/routes";
 
 interface NavbarProps {
   onOpenMobileMenu: () => void;
@@ -48,13 +49,14 @@ export function Navbar({ onOpenMobileMenu }: NavbarProps) {
       "Signed out",
       "You have been safely signed out."
     );
-    router.push("/login");
+    router.push(routes.login());
   };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!searchQuery.trim()) return;
-    router.push(`/projects?search=${encodeURIComponent(searchQuery.trim())}`);
+    router.push(routes.projects(DEFAULT_WORKSPACE) + `?search=${encodeURIComponent(searchQuery.trim())}`);
+
   };
 
   return (
@@ -93,15 +95,15 @@ export function Navbar({ onOpenMobileMenu }: NavbarProps) {
             <span className="hidden sm:inline">New</span>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-48">
-            <DropdownMenuItem onClick={() => router.push("/projects")}>
+            <DropdownMenuItem onClick={() => router.push(routes.projects(DEFAULT_WORKSPACE))}>
               <FolderKanban className="size-4 mr-2 text-primary" />
               <span>New Project</span>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => router.push("/kanban")}>
+            <DropdownMenuItem onClick={() => router.push(routes.projects(DEFAULT_WORKSPACE))}>
               <Kanban className="size-4 mr-2 text-primary" />
               <span>New Task</span>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => router.push("/members")}>
+            <DropdownMenuItem onClick={() => router.push(routes.members(DEFAULT_WORKSPACE))}>
               <UserIcon className="size-4 mr-2 text-primary" />
               <span>Invite Teammate</span>
             </DropdownMenuItem>
@@ -181,7 +183,7 @@ export function Navbar({ onOpenMobileMenu }: NavbarProps) {
             </div>
             <div className="border-t border-border p-2 text-center">
               <Link
-                href="/dashboard"
+                href={routes.dashboard(DEFAULT_WORKSPACE)}
                 className="text-xs text-primary font-medium hover:underline"
               >
                 View all notifications in Dashboard
@@ -225,13 +227,13 @@ export function Navbar({ onOpenMobileMenu }: NavbarProps) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => router.push("/settings")}>
+              <DropdownMenuItem onClick={() => router.push(routes.settings(DEFAULT_WORKSPACE))}>
                 <Settings className="size-4 mr-2" />
                 <span>Account Settings</span>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => router.push("/members")}>
+              <DropdownMenuItem onClick={() => router.push(routes.members(DEFAULT_WORKSPACE))}>
                 <UserIcon className="size-4 mr-2" />
-                <span>Team & Roles</span>
+                <span>Team &amp; Roles</span>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />

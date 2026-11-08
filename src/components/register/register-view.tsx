@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Sparkles } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { siteConfig } from "@/config/site";
+import { routes } from "@/config/routes";
 import { RegisterForm } from "./register-form";
 
 export function RegisterView() {
@@ -12,7 +13,7 @@ export function RegisterView() {
         {/* Brand Header */}
         <div className="flex flex-col items-center text-center space-y-2">
           <Link
-            href="/"
+            href={routes.home()}
             className="flex items-center gap-2.5 font-bold tracking-tight text-foreground"
           >
             <div className="flex size-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
@@ -43,7 +44,7 @@ export function RegisterView() {
           <CardFooter className="justify-center border-t border-border pt-4 text-xs text-muted-foreground">
             Already have an account?{" "}
             <Link
-              href="/login"
+              href={routes.login()}
               className="ml-1 text-primary font-semibold hover:underline"
             >
               Sign in

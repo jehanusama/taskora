@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { registerSchema } from "@/lib/validations/auth";
 import { useRegister } from "@/hooks/use-auth";
 import { notify } from "@/lib/notify";
+import { routes, DEFAULT_WORKSPACE } from "@/config/routes";
 import { Loader2 } from "lucide-react";
 
 export function RegisterForm() {
@@ -38,7 +39,7 @@ export function RegisterForm() {
       "Account Created!",
       "Welcome to Taskora. Your workspace is ready."
     );
-    router.push("/dashboard");
+    router.push(routes.dashboard(DEFAULT_WORKSPACE));
   };
 
   const isPending = registerUser.isPending || isSubmitting;

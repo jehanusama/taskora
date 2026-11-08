@@ -4,11 +4,11 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { siteConfig } from "@/config/site";
+import { routes, DEFAULT_WORKSPACE } from "@/config/routes";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
   FolderKanban,
-  Kanban,
   Users,
   Settings,
   Sparkles,
@@ -31,36 +31,32 @@ export function Sidebar({ onMobileClose, className }: SidebarProps) {
   const { data: user } = useCurrentUser();
   const { data: workspace } = useWorkspaceSettings();
 
+  const currentWs = workspace?.slug || DEFAULT_WORKSPACE;
+
   const navItems = [
     {
       label: "Dashboard",
-      href: "/dashboard",
+      href: routes.dashboard(currentWs),
       icon: LayoutDashboard,
-      active: pathname === "/dashboard",
+      active: pathname.startsWith(routes.dashboard(currentWs)),
     },
     {
       label: "Projects",
-      href: "/projects",
+      href: routes.projects(currentWs),
       icon: FolderKanban,
-      active: pathname.startsWith("/projects"),
-    },
-    {
-      label: "Kanban Board",
-      href: "/kanban",
-      icon: Kanban,
-      active: pathname.startsWith("/kanban"),
+      active: pathname.startsWith(routes.projects(currentWs)),
     },
     {
       label: "Team Members",
-      href: "/members",
+      href: routes.members(currentWs),
       icon: Users,
-      active: pathname.startsWith("/members"),
+      active: pathname.startsWith(routes.members(currentWs)),
     },
     {
       label: "Settings",
-      href: "/settings",
+      href: routes.settings(currentWs),
       icon: Settings,
-      active: pathname.startsWith("/settings"),
+      active: pathname.startsWith(routes.settings(currentWs)),
     },
   ];
 
@@ -74,7 +70,7 @@ export function Sidebar({ onMobileClose, className }: SidebarProps) {
       {/* Brand & Workspace Header */}
       <div className="flex h-16 items-center justify-between border-b border-sidebar-border px-5">
         <Link
-          href="/dashboard"
+          href={routes.dashboard(currentWs)}
           className="flex items-center gap-2.5 font-bold tracking-tight text-foreground transition-opacity hover:opacity-90"
         >
           <div className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-xs">
@@ -156,7 +152,7 @@ export function Sidebar({ onMobileClose, className }: SidebarProps) {
       {/* Footer / User Profile section */}
       <div className="border-t border-sidebar-border p-3">
         <Link
-          href="/settings"
+          href={routes.settings(currentWs)}
           className="flex items-center gap-3 rounded-lg p-2 transition-colors duration-200 hover:bg-sidebar-accent/60"
         >
           <Avatar size="default" className="border border-border">

@@ -14,6 +14,7 @@ import { useDashboardStats, useRecentActivities } from "@/hooks/use-dashboard";
 import { useProjects } from "@/hooks/use-projects";
 import { useTasks } from "@/hooks/use-tasks";
 import { useCurrentUser } from "@/hooks/use-auth";
+import { routes, DEFAULT_WORKSPACE } from "@/config/routes";
 
 export function DashboardView() {
   const { data: user } = useCurrentUser();
@@ -85,7 +86,7 @@ export function DashboardView() {
           variant="outline"
           size="sm"
           className="gap-1.5 shadow-xs"
-          render={<Link href="/members" />}
+          render={<Link href={routes.members(DEFAULT_WORKSPACE)} />}
           nativeButton={false}
         >
           <Users className="size-4" />
@@ -94,7 +95,7 @@ export function DashboardView() {
         <Button
           size="sm"
           className="gap-1.5 shadow-xs"
-          render={<Link href="/projects" />}
+          render={<Link href={routes.projects(DEFAULT_WORKSPACE)} />}
           nativeButton={false}
         >
           <Plus className="size-4" />
